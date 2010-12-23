@@ -1,7 +1,8 @@
+
+
 class CreateHands < ActiveRecord::Migration
   def self.up
     create_table :hands do |t|
-
       t.timestamps
     end
   end

@@ -6,5 +6,6 @@ def create
   @hand = Hand.new
   @hand.status = 1
   @hand.save!
+  render  :text => 'ok' 
 end
 end
