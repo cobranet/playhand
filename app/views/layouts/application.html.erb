@@ -2,13 +2,12 @@
 <html>
 <head>
   <title>Playhand</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag :defaults %>
+  <%= stylesheet_link_tag 'application' %>
+  <%= javascript_include_tag 'development-bundle/jquery-1.4.2.js' %>
   <%= csrf_meta_tag %>
 </head>
 <body>
-
-<%= yield %>
-
+<div id="nav"><button id="new_hand">New</button></nav>
+  <%= yield %>
 </body>
 </html>

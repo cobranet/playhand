@@ -1,0 +1,3 @@
+<% @hands.each do |h| %>
+ <%= h.id %>
+<% end %>

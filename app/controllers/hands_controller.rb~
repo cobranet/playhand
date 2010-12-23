@@ -1,0 +1,5 @@
+class HandsController < ApplicationController
+def index
+  @hands = Hand.find(:all)
+end
+end
