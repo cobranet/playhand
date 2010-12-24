@@ -1,5 +1,7 @@
 <%= javascript_include_tag 'hands' %>
+<table id="hands">
 <% @hands.each do |h| %>
- <%= h.id %>
+  <tr> <td><%= h.id %> <td><td><%= h.status %></td></tr>
 <% end %>
+</table>
 
