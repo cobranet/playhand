@@ -10,12 +10,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101224233605) do
+ActiveRecord::Schema.define(:version => 20101225073727) do
 
   create_table "hands", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "status"
+  end
+
+  create_table "players", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "hand_id"
   end
 
   create_table "users", :force => true do |t|
