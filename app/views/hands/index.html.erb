@@ -1,7 +1,13 @@
 <%= javascript_include_tag 'hands' %>
 <table id="hands">
 <% @hands.each do |h| %>
-  <tr> <td><%= h.id %> <td><td><%= h.status %></td></tr>
+  <tr> 
+    <td><%= h.id %> <td>
+    <td><%= h.status %></td>
+    <% h.players.each do |p| %>
+       <td><%= p.user.email %></td>
+    <% end %>
+ </tr>
 <% end %>
 </table>
 

@@ -4,7 +4,7 @@ def index
 end
 def create
   @hand = Hand.new
-  @hand.status = 1
+  @hand.players << Player.new( :user_id => current_user.id )
   @hand.save!
   render  :text => 'ok' 
 end

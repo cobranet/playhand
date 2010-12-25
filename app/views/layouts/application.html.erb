@@ -9,6 +9,14 @@
 <body>
 <div id="error_msg"></div>
 <div id="info_msg"></div>
+<div id="user">
+ <% if current_user != nil %>  
+   Signed in as <%= current_user.email %>. Not you?
+   <%= link_to "Sign out",destroy_user_session_path %>
+ <% else %>
+   <%= link_to "Sign up",new_user_registration_path %>
+ <% end %>
+</div>
 <div id="nav"><button id="new_hand">New</button></div>
   <%= yield %>
 </body>
