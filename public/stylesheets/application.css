@@ -2,5 +2,9 @@ body {
     background: #666; 
 }
 #nav {
-    border: 2px solid red
+    border: 2px solid red;
+}
+#hands td {
+   background-color: gold;
+   border: 1px solid black;
 }
