@@ -1,3 +1,4 @@
+
 class Hand < ActiveRecord::Base
  has_many :players
  # hand status must be changed affter players is added 
@@ -20,6 +21,5 @@ class Hand < ActiveRecord::Base
    else
      return hands[0]
    end
-    
  end
 end

@@ -6,7 +6,7 @@ def create
   @hand = Hand.find_open_game
   @hand.add_player( Player.new( :user_id => current_user.id ) )
   @hand.save!
-  @hands = Hand.find(:all) 
-  render :text => 'ok'
+  @hands=Hand.find (:all)
+  render :nothing => true
 end
 end
