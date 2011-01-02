@@ -1,4 +1,4 @@
-var H = function () {
+gvar H = function () {
   var p = {
    new_hand : 
     function(){
