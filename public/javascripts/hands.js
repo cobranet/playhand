@@ -7,8 +7,7 @@ var H = function () {
           url     : '/hands' ,
           success : 
             function(data) { 
-                alert($('#hands_div')); 
-          $('#hands_div').html(data); },
+             $('#hands_div').html(data); },
           error  :  function(data){ p.report_error(data); }
         } 
       ); 

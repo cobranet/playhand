@@ -1,0 +1,109 @@
+class Card
+ include Comparable
+ def <=>(other)
+   ret = self.suit <=> other.suit 
+   if ret == 0 then 
+    return  self.value <=> other.value
+   else
+    return ret
+   end
+ end
+ 
+ @@SUITS = ['S','D','H','C']
+ @@VALUES = ['7','8','9','T','J','Q','K','A']
+ 
+ attr_reader :suit,:value,:id
+ 
+ def initialize (str,value=0)
+   if str.class.name == "String" then 
+     @value = @@VALUES.index str[0]
+     if @value == nil then raise "Bad value #{str[0]} " end 
+     @suit = @@SUITS.index str[1] 
+     if @suit == nil  then raise "Bad suit #{str[1]}" end
+   else
+     if str < 0 or str > 3 then raise "Bad suit #{str}" end 
+     if value < 0 or value > 7 then raise "Bad value: #{value}"  end
+     @value = value
+     @suit = str
+   end
+   @id = 8*@suit+@value
+  end 
+ def to_s
+   "#{@@VALUES[value]}#{@@SUITS[suit]}"
+ end 
+end
+
+class Stack
+ 
+ include Enumerable
+ attr_reader :cards 
+ def add(card)
+  if card.class.name != "Card" then raise "In stack may go only Cards" end
+  @cards << card
+  self
+ end
+ def load_string(str)
+   @cards = []
+   (0..str.size/2-1).each do |i|
+      @cards << Card.new(str[i*2..i*2+1])
+   end
+   self
+ end 
+ def each
+   @cards.each { |i| yield i } 
+ end  
+ def initialize
+    @cards=[]
+    self
+ end
+ def randomize!
+   @cards = @cards.sort_by { rand }
+ end 
+ def sort!
+  @cards = self.sort
+  self
+ end
+ def size
+   @cards.size
+ end
+ def to_s
+   str =""
+   self.each { |c| str=str+c.to_s }
+   str
+ end 
+end
+
+
+class Preferans
+  attr_reader :players_stacks
+  def deal
+    deck =Stack.new
+    (0..3).each do |s|
+      (0..7).each do |v|
+        deck.add Card.new s,v
+       end 
+     end
+    deck.randomize!
+    (0..2).each do |i|
+      @players_stacks[i]=Stack.new
+      (0..9).each do |x| 
+        @players_stacks[i].add(deck.cards[10*i+x])
+      end 
+      @players_stacks[i].sort!
+    end 
+    @talon.add(deck.cards[30])
+    @talon.add(deck.cards[31])
+  end
+  def initialize
+   @players_stacks=[]
+   @taken_stacks=[]
+   @talon = Stack.new
+   @tab = Stack.new
+   (0..2).each do |x|
+      @players_stacks[x] = Stack.new
+      @taken_stacks[x]=Stack.new
+   end 
+  end  
+   
+end;
+

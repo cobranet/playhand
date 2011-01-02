@@ -1,0 +1,7 @@
+require 'test_helper'
+class CardTest < ActiveSupport::TestCase
+  test "create card from string" do 
+     c=Card.new "AH" 
+     assert c.to_s == "AH" 
+  end
+end
