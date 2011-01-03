@@ -4,7 +4,7 @@ var H = function () {
     function(){
       $.ajax( 
         { type    : 'POST',
-          url     : '/hands' ,
+          url     : '/hands'   ,
           success : 
             function(data) { 
              $('#hands_div').html(data); },

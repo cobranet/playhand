@@ -1,6 +1,6 @@
-
 class Hand < ActiveRecord::Base
  has_many :players
+ has_one :game_data
  # hand status must be changed affter players is added 
  # status is 1 created waiting for 2 players
  #           2 created waiting for 1 player

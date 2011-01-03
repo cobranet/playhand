@@ -1,0 +1,8 @@
+var CT = 
+ function(
+     var p={
+	 p.alert: function (){ alert('tu sam') } 
+     };
+     return p;    
+ ){}();
+$( function(){ CT.alert(); });

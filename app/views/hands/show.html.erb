@@ -1,0 +1,39 @@
+<%= javascript_include_tag 'cardtable.js' %>
+<div id="hiden_images">
+  <img id="AH" src="/images/cards/AH.png"></img>
+  <img id="AC" src="/images/cards/AC.png"></img>
+  <img id="AD" src="/images/cards/AD.png"></img>
+  <img id="AS" src="/images/cards/AS.png"></img>
+  <img id="KH" src="/images/cards/KH.png"></img>
+  <img id="KC" src="/images/cards/KC.png"></img>
+  <img id="KD" src="/images/cards/KD.png"></img>
+  <img id="KS" src="/images/cards/KS.png"></img>
+  <img id="QH" src="/images/cards/QH.png"></img>
+  <img id="QC" src="/images/cards/QC.png"></img>
+  <img id="QD" src="/images/cards/QD.png"></img>
+  <img id="QS" src="/images/cards/QS.png"></img>
+  <img id="JH" src="/images/cards/JH.png"></img>
+  <img id="JC" src="/images/cards/JC.png"></img>
+  <img id="JD" src="/images/cards/JD.png"></img>
+  <img id="JS" src="/images/cards/JS.png"></img>
+  <img id="TH" src="/images/cards/TH.png"></img>
+  <img id="TC" src="/images/cards/TC.png"></img>
+  <img id="TD" src="/images/cards/TD.png"></img>
+  <img id="TS" src="/images/cards/TS.png"></img>
+  <img id="9H" src="/images/cards/9H.png"></img>
+  <img id="9C" src="/images/cards/9C.png"></img>
+  <img id="9D" src="/images/cards/9D.png"></img>
+  <img id="9S" src="/images/cards/9S.png"></img>
+  <img id="8H" src="/images/cards/8H.png"></img>
+  <img id="8C" src="/images/cards/8C.png"></img>
+  <img id="8D" src="/images/cards/8D.png"></img>
+  <img id="8S" src="/images/cards/8S.png"></img>
+  <img id="7H" src="/images/cards/7H.png"></img>
+  <img id="7C" src="/images/cards/7C.png"></img>
+  <img id="7D" src="/images/cards/7D.png"></img>
+  <img id="7S" src="/images/cards/7S.png"></img>
+</div>
+<canvas id="cardtable" width="600" height="400"></canvas>
+<h1>P1=<%= @game.players_stacks[0].to_s %></h1>
+<h1>P2=<%= @game.players_stacks[1].to_s %></h1>
+<h1>P3=<%= @game.players_stacks[2].to_s %></h1>
