@@ -57,6 +57,7 @@ var Card = {
 var cardT = {
     canvas: 0,
     ctx: 0,
+    data: 0,
     timer:0,
     cards:[],
     add_card: function(card_file,index,x,y){
@@ -67,13 +68,34 @@ var cardT = {
         c.init(new_cvs,x,y,72,96,card_file);
         cardT.cards[index]=c;
      },
+     getTableData: function(){
+        $.ajax(
+ 	 {
+                     type: 'GET',
+                     url:  'data/112',
+                     success: function(data){ 
+                         alert('success');
+                                cardT.data = data;
+                                cardT.refresh();
+                              },
+                     error  :  function(data){ p.report_error(data);} 
+                 }
+             );
+         },
+    refresh: function(){
+        var i;
+        for (i=0;i<cardT.data.player_cards.length;i++){
+           cardT.add_card("/images/cards/"+cardT.data.player_cards[i]+".png"
+                           ,i,10+i*20,10);
+        }
+    },
     init: function(canvas){ 
 	var i;
         var c;
         var new_cvs;
         cardT.canvas = canvas;
         cardT.ctx=cardT.canvas.getContext('2d');
-        cardT.timer = setInterval(cardT.drawFrame, 400);
+        cardT.timer = setInterval(cardT.drawFrame, 1400);
     },
     drawFrame: function(){
 	var i;
@@ -86,15 +108,17 @@ var cardT = {
 	    } 
         };
     } 
-    
 };
 $( function() {
+    alert('once');
     var can =  $('#cardtable')[0];
     var ctx = can.getContext('2d');
     cardT.init(can);
+    cardT.getTableData();
+/*
     cardT.add_card("/images/cards/AH.png",0,10,10);
     cardT.add_card("/images/cards/KH.png",1,30,10);
-  
+  */
 });
 /*
 var CT = 
