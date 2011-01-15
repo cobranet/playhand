@@ -18,6 +18,7 @@ var Card = {
     smer_x :0,
     smer_y :0,
     speed: 0,
+    visible: true,
     clicked: function (){
         if (Card.in_move === true) {
             return;
@@ -142,7 +143,7 @@ var cardT = {
     refresh: function(){
         var i;
         for (i=0;i<cardT.data.player_cards.length;i++){
-           cardT.add_card("/images/cards/"+cardT.data.player_cards[i]+".png",i,10+i*20,50);
+           cardT.add_card("/images/cards/"+cardT.data.player_cards[i]+".png",i,150+i*20,250);
         }
     },
     move: function(){
@@ -171,8 +172,8 @@ var cardT = {
 	var i;
         var c;
         if (cardT.background_draw === false ){
-            cardT.draw_background();    
-        }
+            cardT.draw_background();
+           }
         for(i=0;i<cardT.cards.length;i++){
             c=cardT.cards[i];  
             if ( c ) {
