@@ -80,9 +80,6 @@ var Card = {
                         Card.smer_y = 0;  
                     }  
                 } 
-               console.log( Card.smer_y);
-               console.log( Card.smer_x); 
-               
                 if ( Card.smer_y === 0 && Card.smer_y === 0 ){
                     Card.in_move=false; 
                 }
@@ -98,8 +95,16 @@ var cardT = {
     timer:0,
     move_timer:0,
     pos:0,
+    background:0,
     cards:[],
-    on_click: function(evntdata){
+    is_ready: false,
+    background_draw: false, 
+  loadBackground: function(img_file){
+        cardT.background = new Image();
+        cardT.background.onload=function() { cardT.is_ready=true;  };
+        cardT.background.src=img_file; 
+    },
+  on_click: function(evntdata){
         var i;
         var clickked=0;
         var x=evntdata.pageX-cardT.pos.left;
@@ -148,9 +153,16 @@ var cardT = {
             c.move();
        }
     },
+    draw_background: function (){
+        if (cardT.is_ready) {
+           cardT.ctx.drawImage(cardT.background,0,0,600,400);
+            cardT.background_draw=true;
+	}
+    },
     init: function(canvas){ 
         cardT.canvas = canvas;
         cardT.ctx=cardT.canvas.getContext('2d');
+        cardT.loadBackground("/images/table.png");
         cardT.timer = setInterval(cardT.drawFrame, 10);
         cardT.move_timer =  setInterval(cardT.move,20);
         cardT.timerData = setTimeout(cardT.getTableData,100); 
@@ -158,12 +170,14 @@ var cardT = {
     drawFrame: function(){
 	var i;
         var c;
-     
+        if (cardT.background_draw === false ){
+            cardT.draw_background();    
+        }
         for(i=0;i<cardT.cards.length;i++){
             c=cardT.cards[i];  
             if ( c ) {
             c.drawImage();
-            cardT.ctx.fillRect(c.last_x,c.last_y,c.width,c.height);
+		cardT.ctx.drawImage(cardT.background,c.last_x,c.last_y,c.width,c.height,c.last_x,c.last_y,c.width,c.height);
             cardT.ctx.drawImage(c.canvas,c.x,c.y,c.width,c.height);
 		c.last_x=c.x; c.last_y=c.y;
 	    } 
