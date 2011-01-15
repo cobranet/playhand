@@ -12,6 +12,8 @@ var Card = {
     ctx:0,
     target_x:0,
     target_y:0,
+    last_x:0,
+    last_y:0,
     current_frame: 0,
     smer_x :0,
     smer_y :0,
@@ -19,17 +21,17 @@ var Card = {
     clicked: function (){
         if (Card.in_move === true) {
             return;
- }
+        }
 	if ( Card.selected === true ){
             Card.selected = false;
             Card.target_y = Card.y + 10;
             Card.in_move = true;
-            Card.smer_y = 1;  
+            Card.smer_y = 1;
         } else {
             Card.selected = true;
             Card.target_y = Card.y-10;
             Card.in_move = true;
-            Card.smer_y = -1;  
+            Card.smer_y = -1;
         }
     },
     init: function ( canvas,x,y,width,height,im){
@@ -53,18 +55,17 @@ var Card = {
         Card.image.onload=function() { Card.is_ready=true;  };
         Card.image.src=img_file; 
     },
+    
     drawImage: function(){
-        Card.ctx.clearRect(0,0,Card.width,Card.height);
         if ( Card.is_ready ){
             Card.ctx.drawImage(Card.image,0,0);
-            Card.move(); 
         } 
     },
     move: function(){
-        if ( Card.in_move === false ){
+       if ( Card.in_move === false ){
             return;
         }  
-        if ( Card.x !== Card.target_x || Card.y !== Card.target_y ){
+       if ( Card.smer_x !== 0 || Card.smer_y !== 0 ){
                if (Card.smer_x !== 0){
                     Card.x = Card.x + 2*Card.smer_x;
                     if ( Card.smer_x*Card.x > Card.smer_x*Card.target_x ) {
@@ -79,6 +80,9 @@ var Card = {
                         Card.smer_y = 0;  
                     }  
                 } 
+               console.log( Card.smer_y);
+               console.log( Card.smer_x); 
+               
                 if ( Card.smer_y === 0 && Card.smer_y === 0 ){
                     Card.in_move=false; 
                 }
@@ -92,6 +96,7 @@ var cardT = {
     ctx: 0,
     data: 0,
     timer:0,
+    move_timer:0,
     pos:0,
     cards:[],
     on_click: function(evntdata){
@@ -135,10 +140,19 @@ var cardT = {
            cardT.add_card("/images/cards/"+cardT.data.player_cards[i]+".png",i,10+i*20,50);
         }
     },
+    move: function(){
+        var i;
+        var c;
+        for (i=0;i<cardT.cards.length;i++){
+            c=cardT.cards[i];
+            c.move();
+       }
+    },
     init: function(canvas){ 
         cardT.canvas = canvas;
         cardT.ctx=cardT.canvas.getContext('2d');
         cardT.timer = setInterval(cardT.drawFrame, 10);
+        cardT.move_timer =  setInterval(cardT.move,20);
         cardT.timerData = setTimeout(cardT.getTableData,100); 
     },
     drawFrame: function(){
@@ -149,7 +163,9 @@ var cardT = {
             c=cardT.cards[i];  
             if ( c ) {
             c.drawImage();
+            cardT.ctx.fillRect(c.last_x,c.last_y,c.width,c.height);
             cardT.ctx.drawImage(c.canvas,c.x,c.y,c.width,c.height);
+		c.last_x=c.x; c.last_y=c.y;
 	    } 
         }
 	}
