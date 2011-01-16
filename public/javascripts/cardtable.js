@@ -1,5 +1,6 @@
 function newCard(){
 var Card = {
+    id:0,
     x: 0,
     y: 0,
     selected: false,
@@ -19,20 +20,41 @@ var Card = {
     smer_y :0,
     speed: 0,
     visible: true,
+/* seting new position for card */  
+    move_to: function(x,y){
+        if (Card.in_move) { return; }
+	Card.target_x=x;
+        Card.target_y=y;
+        if(y !== Card.y){
+            Card.in_move = true;
+            if (y-Card.y > 0 ) { Card.smer_y=1; } else { Card.smer_y=-1; }
+        } 
+        if (x!==Card.x){
+            Card.in_move=true;
+            if (x-Card.x > 0 ) { Card.smer_x=1; } else { Card.smer_x=-1; }    
+        }
+    },
+/* When select card from stack all other must be deselected */
+    select: function (){
+        Card.selected = true;
+        Card.target_y = Card.y-10;
+        Card.in_move = true;
+        Card.smer_y = -1;               
+    },
+    deselect: function(){
+        Card.selected = false;
+        Card.target_y = Card.y + 10;
+        Card.in_move = true;
+        Card.smer_y = 1;   
+    },
     clicked: function (){
         if (Card.in_move === true) {
             return;
         }
 	if ( Card.selected === true ){
-            Card.selected = false;
-            Card.target_y = Card.y + 10;
-            Card.in_move = true;
-            Card.smer_y = 1;
+            Card.deselect();
         } else {
-            Card.selected = true;
-            Card.target_y = Card.y-10;
-            Card.in_move = true;
-            Card.smer_y = -1;
+            Card.select();
         }
     },
     init: function ( canvas,x,y,width,height,im){
@@ -58,7 +80,7 @@ var Card = {
     },
     
     drawImage: function(){
-        if ( Card.is_ready ){
+        if ( Card.is_ready && Card.visible ){
             Card.ctx.drawImage(Card.image,0,0);
         } 
     },
@@ -81,7 +103,7 @@ var Card = {
                         Card.smer_y = 0;  
                     }  
                 } 
-                if ( Card.smer_y === 0 && Card.smer_y === 0 ){
+                if ( Card.smer_x === 0 && Card.smer_y === 0 ){
                     Card.in_move=false; 
                 }
         }  
@@ -107,7 +129,8 @@ var cardT = {
     },
   on_click: function(evntdata){
         var i;
-        var clickked=0;
+        var clickked=-1;
+        var c=0;
         var x=evntdata.pageX-cardT.pos.left;
         var y=evntdata.pageY-cardT.pos.top;
         for (i=0;i<10;i++){
@@ -115,7 +138,27 @@ var cardT = {
 		clickked = i; 
 	    }    
         }
-        cardT.cards[clickked].clicked();
+        /* no card is selected */
+        if ( clickked === -1) {
+          return ;  
+        }
+        c=cardT.cards[clickked];
+        /* if card is moving do nothing */  
+        if ( c.in_move === true ) {
+          return;  
+        } 
+        /* if selected deselect others */
+        if ( c.selected === true ){
+          cardT.play_card(clickked);
+        } else { 
+        /* if not selected .... select that and deselect others */  
+          c.select();
+          for(i=0;i<10;i++){
+                if (i !== clickked && cardT.cards[i].selected ){
+                    cardT.cards[i].deselect();  
+                } 
+          }
+        }
     },
     add_card: function(card_file,index,x,y){
 	var c;
@@ -140,12 +183,33 @@ var cardT = {
              );
            
          },
+    loadAllCards: function(){
+	var i;
+        for (i=0;i<53;i++){
+            cardT.add_card("/images/cards/"+i+".png",i,150+i*20,250);
+        }
+    },
     refresh: function(){
         var i;
         for (i=0;i<cardT.data.player_cards.length;i++){
            cardT.add_card("/images/cards/"+cardT.data.player_cards[i]+".png",i,150+i*20,250);
         }
     },
+    move_card: function(index,x,y){
+	cardT.cards[index].move_to(x,y);
+    }, 
+    play_card: function(index){
+        var i;
+        cardT.cards[index].selected=false; 
+        cardT.move_card(index,100,100);
+        /* all cards from player stack except played */
+        for (i=0;i<index;i++){
+            cardT.move_card(i,cardT.cards[i].x+10,cardT.cards[i].y);
+        }
+        for (i=index+1;i<10;i++){
+            cardT.move_card(i,cardT.cards[i].x-10,cardT.cards[i].y);
+        }
+    }, 
     move: function(){
         var i;
         var c;
