@@ -8,8 +8,8 @@ class Card
     return ret
    end
  end
- @@SUITS = ['S','D','H','C']
- @@VALUES = ['7','8','9','T','J','Q','K','A']
+ @@SUITS = ['S','D','H','C'];
+ @@VALUES =  ['7','8','9','T','J','Q','K','A'];
  
  attr_reader :suit,:value,:id
  def initialize (str,value=0)
