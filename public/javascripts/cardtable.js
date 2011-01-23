@@ -145,6 +145,7 @@ var cardT = {
                 step_x:pstepx,
                 step_y:pstepy,
                 l:0,
+                clickable: false,
                 pos: function(index){
                     var p={
                         x:0,
@@ -165,31 +166,46 @@ var cardT = {
                         card.x= s.pos(index).x;
                         card.y= s.pos(index).y;
                     }
+                    card.visible=true;
                 }
             };
         return s;
+    },
+    getCard: function(stack,cardindex){
+        return cardT.all_cards[cardT.stacks[stack].cards[cardindex]];
     },
     loadBackground: function(img_file){
         cardT.background = new Image();
         cardT.background.onload=function() { cardT.is_ready=true;  };
         cardT.background.src=img_file;
     },
+    /* you can click only on clckable staks */
     on_click: function(evntdata){
         var i;
         var clickked=-1;
+        var stack_clicked=-1;
+        var card=0;
+        var k;
         var c=0;
         var x=evntdata.pageX-cardT.pos.left;
         var y=evntdata.pageY-cardT.pos.top;
-        for (i=0;i<10;i++){
-            if (  x >  cardT.all_cards[i].x && x < cardT.all_cards[i].x+cardT.all_cards[i].width && y > cardT.all_cards[i].y && y < cardT.all_cards[i].y+cardT.all_cards[i].height ){
-                clickked = i;
+        for (i=0; i< cardT.stacks.length;i++){
+            if (cardT.stacks[i].clickable){
+                for (k=0;k<cardT.stacks[i].cards.length;k++){
+                    card=cardT.getCard(i,k);
+                    if (  x >  card.x && x < card.x+card.width
+                        && y > card.y && y < card.y+card.height ){
+                        clickked = k;
+                        stack_clicked=i;
+                    }
+                 }
             }
         }
         /* no card is selected */
         if ( clickked === -1) {
             return ;
         }
-        c=cardT.all_cards[clickked];
+        c=cardT.getCard(stack_clicked,clickked);
         /* if card is moving do nothing */
         if ( c.in_move === true ) {
             return;
@@ -198,11 +214,13 @@ var cardT = {
         if ( c.selected === true ){
             cardT.play_card(clickked);
         } else {
-        /* if not selected .... select that and deselect others */
+        /* if not selected .... select that and deselect others
+           from that stack  */
             c.select();
-            for(i=0;i<10;i++){
-                if (i !== clickked && cardT.all_cards[i].selected ){
-                    cardT.all_cards[i].deselect();
+            for(i=0;i<cardT.stacks[stack_clicked].cards.length;i++){
+                c=cardT.getCard(stack_clicked,i);
+                if (i !== clickked && c.selected ){
+                    c.deselect();
                 }
             }
         }
@@ -310,18 +328,19 @@ var cardT = {
             cardT.draw_background();
         }
         for(i=0;i<cardT.stacks.length;i++){
-            console.log(cardT.stacks[i].cards.length);
             for (k=0;k<cardT.stacks[i].cards.length;k++){
                 card=cardT.stacks[i].cards[k];
-                console.log(card);
                 cardT.drawCard(card);
             }
         }
     },
     testTable: function(){
-        var stack=cardT.newStack(100,100,20,0);
+        var stack=cardT.newStack(100,200,25,0);
+        stack.clickable=true;
         stack.add(0,0);
-        cardT.all_cards[0].visible=true;
+        stack.add(1,11);
+        stack.add(2,22);
+        stack.add(3,7);
         cardT.stacks[0]=stack;
         console.log("test table"+ cardT.stacks.length);
     }

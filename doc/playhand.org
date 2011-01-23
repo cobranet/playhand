@@ -1,0 +1,5 @@
+* Files
+* Logs
+** <2011-01-23 ned>
+*** Refaktoring cardhand.js
+Puting all Images of cards in cardT, and in Card object referensing to image
