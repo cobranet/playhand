@@ -1,15 +1,32 @@
-function newCard(){
-    var Card = {
-            id:0,
+/****************************************************************
+cardT Glavna tabla
+*****************************************************************/
+var cardT = {
+    canvas: 0,
+    ctx: 0,
+    data: 0,
+    timer:0,
+    move_timer:0,
+    pos:0,
+    stacks:[],
+    background:0,
+    card_images:[],
+    images_ready:0,
+    total_images:33,
+    background_draw: false,
+/* CARD OBJECT */
+    newCard:function(id){
+       var Card = {
+            id:id,
             x: 0,
             y: 0,
             selected: false,
             width: 0,
             height: 0,
-            image: 0,
+            image: cardT.card_images[id],
             is_ready: 0,
             in_move: false,
-            canvas: 0,
+            canvas: document.createElement('canvas') ,
             ctx:0,
             target_x:0,
             target_y:0,
@@ -22,7 +39,7 @@ function newCard(){
             visible: false,
 /* seting new position for card */
             move_to: function(x,y){
-                if (Card.in_move) { return; }
+                if (Card.in_move ) { return; }
                 Card.target_x=x;
                 Card.target_y=y;
                 if(y !== Card.y){
@@ -66,30 +83,9 @@ function newCard(){
                     Card.select();
                 }
             },
-            init: function ( canvas,x,y,width,height,im){
-                Card.is_ready=false;
-                Card.x=x;
-                Card.y=y;
-                Card.width=width;
-                Card.height=height;
-                Card.speed=0;
-                Card.current_frame= 0;
-                Card.target_x=x;
-                Card.target_y=y;
-                Card.canvas=canvas;
-                Card.canvas.setAttribute('width',width);
-                Card.canvas.setAttribute('height',height);
-                Card.ctx=Card.canvas.getContext('2d');
-                Card.loadImage(im);
-            },
-            loadImage: function(img_file){
-                Card.image = new Image();
-                Card.image.onload=function() { Card.is_ready=true;  };
-                Card.image.src=img_file;
-            },
             drawImage: function(){
                 if ( Card.is_ready && Card.visible ){
-                    Card.ctx.drawImage(Card.image,0,0);
+                     Card.ctx.drawImage(Card.image,0,0);
                 }
             },
             move: function(){
@@ -118,29 +114,14 @@ function newCard(){
             }
         };
     return Card;
-}
-/****************************************************************
-cardT Glavna tabla
-*****************************************************************/
-var cardT = {
-    canvas: 0,
-    ctx: 0,
-    data: 0,
-    timer:0,
-    move_timer:0,
-    pos:0,
-    stacks:[],
-    background:0,
-    all_cards:[],
-    is_ready: false,
-    background_draw: false,
-    /* Stacks are group of cards , they keep only reference to card from
-       cardT
-       Thay keep positions of cards */
-    newStack:function(px,py,pstepx,pstepy){
+},
+/*STACKS Stacks are group of cards Thay keep positions of cards */
+    newStack:function(px,py,pstepx,pstepy,pcardw,pcardh){
         var s = {
                 cards: [],
                 x:px,
+                cardh:pcardh,
+                cardw:pcardw,
                 y:py,
                 step_x:pstepx,
                 step_y:pstepy,
@@ -155,13 +136,29 @@ var cardT = {
                     p.y=s.y+s.step_y*index;
                     return p;
                 },
-                add: function(index,cardindex){
-                    var card=cardT.all_cards[cardindex];
-                    s.cards[index]=cardindex;
+                remove:function(index){
+                    var i;
+                    s.cards[index]=null;
+                    for(i=index;i<s.l-1;i++){
+                        s.cards[i]=s.cards[i+1];
+                    }
+                    s.l--;
+                },
+                add: function(index,card){
+                    card.is_ready=true;
+                    card.speed=0;
+                    card.current_frame= 0;
+                    card.canvas.setAttribute('width',s.cardw);
+                    card.canvas.setAttribute('height',s.cardh);
+                    card.ctx=card.canvas.getContext('2d');
+                    card.width = s.cardw;
+                    card.height = s.cardh;
+                    s.cards[index]=card;
                     s.l++;
 /* if cards is visible move it to new position  if not just set it */
                     if (card.visible===true){
-                        cardT.move_to(index,s.pos(index).x,s.pos(index).y);
+                        card.in_move=false;
+                        cardT.move_card(card,s.pos(index).x,s.pos(index).y);
                     } else {
                         card.x= s.pos(index).x;
                         card.y= s.pos(index).y;
@@ -172,11 +169,28 @@ var cardT = {
         return s;
     },
     getCard: function(stack,cardindex){
-        return cardT.all_cards[cardT.stacks[stack].cards[cardindex]];
+        return cardT.stacks[stack].cards[cardindex];
+    },
+    loadCardImage: function(img_file){
+        var index;
+        index=cardT.card_images.length;
+        cardT.card_images[index] = new Image();
+        cardT.card_images[index].onload=function(){
+            cardT.images_ready=cardT.images_ready+1;
+        };
+        cardT.card_images[index].src=img_file;
+    },
+    is_ready: function(){
+        if (cardT.images_ready === cardT.total_images ){
+            return true;
+        }
+        return false;
     },
     loadBackground: function(img_file){
         cardT.background = new Image();
-        cardT.background.onload=function() { cardT.is_ready=true;  };
+        cardT.background.onload=function(){
+            cardT.images_ready=cardT.images_ready+1;
+        };
         cardT.background.src=img_file;
     },
     /* you can click only on clckable staks */
@@ -191,7 +205,7 @@ var cardT = {
         var y=evntdata.pageY-cardT.pos.top;
         for (i=0; i< cardT.stacks.length;i++){
             if (cardT.stacks[i].clickable){
-                for (k=0;k<cardT.stacks[i].cards.length;k++){
+                for (k=0;k<cardT.stacks[i].l;k++){
                     card=cardT.getCard(i,k);
                     if (  x >  card.x && x < card.x+card.width
                         && y > card.y && y < card.y+card.height ){
@@ -212,26 +226,18 @@ var cardT = {
         }
         /* if selected deselect others */
         if ( c.selected === true ){
-            cardT.play_card(clickked);
+            cardT.play_card(stack_clicked,clickked);
         } else {
         /* if not selected .... select that and deselect others
            from that stack  */
             c.select();
-            for(i=0;i<cardT.stacks[stack_clicked].cards.length;i++){
+            for(i=0;i<cardT.stacks[stack_clicked].l;i++){
                 c=cardT.getCard(stack_clicked,i);
                 if (i !== clickked && c.selected ){
                     c.deselect();
                 }
             }
         }
-    },
-    add_card: function(card_file,index,x,y){
-        var c;
-        var new_cvs;
-        c = newCard();
-        new_cvs = document.createElement('canvas');
-        c.init(new_cvs,x,y,72,96,card_file);
-        cardT.all_cards[index]=c;
     },
     getTableData: function(){
         $.ajax(
@@ -249,46 +255,55 @@ var cardT = {
             }
         );
     },
-    loadAllCards: function(){
+    loadAllCardImages: function(){
         var i;
         var k;
         var suits = ['S','D','H','C'];
         var values =  ['7','8','9','T','J','Q','K','A'];
         for (i=0;i<4;i++){
             for (k=0;k<8;k++){
-                cardT.add_card("/images/cards/"+values[k]+suits[i]+".png",
-                                i*8+k,150+i*20,100+k*17);
+                cardT.loadCardImage("/images/cards/"+values[k]+suits[i]+".png");
             }
         }
 
     },
     refresh: function(){
         var i;
-        for (i=0;i<cardT.data.player_cards.length;i++){
+        for (i=0;i<cardT.data.play_cards.length;i++){
             cardT.add_card("/images/cards/"+cardT.data.player_cards[i]+".png",i,150+i*20,250);
         }
     },
-    move_card: function(index,x,y){
-        cardT.all_cards[index].move_to(x,y);
+    move_card: function(c,x,y){
+        c.move_to(x,y);
     },
-    play_card: function(index){
+    play_card: function(stack,index){
         var i;
-        cardT.all_cards[index].selected=false;
-        cardT.move_card(index,100,100);
+        var c;
+        var c1=cardT.getCard(stack,index);
+        var s=cardT.stacks[stack];
+        c1.selected=false;
+        c1.in_move=false;
         /* all cards from player stack except played */
         for (i=0;i<index;i++){
-            cardT.move_card(i,cardT.all_cards[i].x+10,cardT.all_cards[i].y);
+            c=cardT.getCard(stack,i);
+            cardT.move_card(c, c.x+s.step_x,c.y);
         }
-        for (i=index+1;i<10;i++){
-            cardT.move_card(i,cardT.all_cards[i].x-10,cardT.all_cards[i].y);
+        for (i=index+1;i<s.l;i++){
+            c=cardT.getCard(stack,i);
+            cardT.move_card(c,c.x-s.step_x,c.y);
         }
+        cardT.stacks[1].add(cardT.stacks[1].l,c1);
+        s.remove(index);
     },
     move: function(){
         var i;
         var c;
-        for (i=0;i<cardT.all_cards.length;i++){
-            c=cardT.all_cards[i];
-            c.move();
+        var s;
+        for (s=0;s<cardT.stacks.length;s++){
+            for (i=0;i<cardT.stacks[s].l;i++){
+                c=cardT.getCard(s,i)
+                c.move();
+            }
         }
     },
     draw_background: function (){
@@ -304,18 +319,20 @@ var cardT = {
         cardT.timer = setInterval(cardT.drawFrame, 10);
         cardT.move_timer =  setInterval(cardT.move,20);
         // cardT.timerData = setTimeout(cardT.getTableData,100);
-        cardT.loadAllCards();
+        cardT.loadAllCardImages();
     },
-    drawCard:function( card_index ){
-        var c;
-        c=cardT.all_cards[card_index];
+    drawCard:function( c ){
         if ( c ) {
             c.drawImage();
             cardT.ctx.drawImage(cardT.background,
-                                c.last_x,c.last_y,
-                                c.width,c.height,
-                                c.last_x,c.last_y,
-                                c.width,c.height);
+                                c.last_x,
+                                c.last_y,
+                                c.width,
+                                c.height,
+                                c.last_x,
+                                c.last_y,
+                                c.width,
+                                c.height );
             cardT.ctx.drawImage(c.canvas,c.x,c.y,c.width,c.height);
             c.last_x=c.x; c.last_y=c.y;
         }
@@ -324,24 +341,34 @@ var cardT = {
         var i;
         var k;
         var card;
+        if (cardT.is_ready === false){
+            return;
+        }
         if (cardT.background_draw === false ){
             cardT.draw_background();
         }
         for(i=0;i<cardT.stacks.length;i++){
-            for (k=0;k<cardT.stacks[i].cards.length;k++){
+            for (k=0;k<cardT.stacks[i].l;k++){
                 card=cardT.stacks[i].cards[k];
                 cardT.drawCard(card);
             }
         }
     },
     testTable: function(){
-        var stack=cardT.newStack(100,200,25,0);
+        var i;
+        var card;
+        if (cardT.is_ready === false ){
+            setTimeout(cardT.testTable,1000);
+        }
+        var stack=cardT.newStack(100,200,25,0,72,96);
+        var move_stack=cardT.newStack(30,100,25,0,72,96);
         stack.clickable=true;
-        stack.add(0,0);
-        stack.add(1,11);
-        stack.add(2,22);
-        stack.add(3,7);
+        for (i=0;i<10;i++){
+            card=cardT.newCard(i);
+            stack.add(i,card);
+        }
         cardT.stacks[0]=stack;
+        cardT.stacks[1]=move_stack;
         console.log("test table"+ cardT.stacks.length);
     }
 };
