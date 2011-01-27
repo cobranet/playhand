@@ -94,14 +94,14 @@ var cardT = {
                 }
                 if ( Card.smer_x !== 0 || Card.smer_y !== 0 ){
                     if (Card.smer_x !== 0){
-                        Card.x = Card.x + 2*Card.smer_x;
+                        Card.x = Card.x + 10*Card.smer_x;
                         if ( Card.smer_x*Card.x > Card.smer_x*Card.target_x ) {
                             Card.x = Card.target_x;
                             Card.smer_x = 0;
                         }
                     }
                     if (Card.smer_y !== 0 ) {
-                        Card.y = Card.y + 2*Card.smer_y;
+                        Card.y = Card.y + 10*Card.smer_y;
                         if ( Card.smer_y*Card.y > Card.smer_y*Card.target_y ) {
                             Card.y = Card.target_y;
                             Card.smer_y = 0;
@@ -286,11 +286,11 @@ var cardT = {
         /* all cards from player stack except played */
         for (i=0;i<index;i++){
             c=cardT.getCard(stack,i);
-            cardT.move_card(c, c.x+s.step_x,c.y);
+            cardT.move_card(c, c.x+s.step_x/2,c.y);
         }
         for (i=index+1;i<s.l;i++){
             c=cardT.getCard(stack,i);
-            cardT.move_card(c,c.x-s.step_x,c.y);
+            cardT.move_card(c,c.x-s.step_x/2,c.y);
         }
         cardT.stacks[1].add(cardT.stacks[1].l,c1);
         s.remove(index);
@@ -316,8 +316,8 @@ var cardT = {
         cardT.canvas = canvas;
         cardT.ctx=cardT.canvas.getContext('2d');
         cardT.loadBackground("/images/table.png");
-        cardT.timer = setInterval(cardT.drawFrame, 10);
-        cardT.move_timer =  setInterval(cardT.move,20);
+        cardT.timer = setInterval(cardT.drawFrame, 5);
+        cardT.move_timer =  setInterval(cardT.move,5);
         // cardT.timerData = setTimeout(cardT.getTableData,100);
         cardT.loadAllCardImages();
     },

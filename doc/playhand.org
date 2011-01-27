@@ -1,5 +1,23 @@
 * Files
+** cardtable.js
+*** object(class)
+**** cardT
+Main application represents a table where players play card game.
+Cards are orginizaed in stacks.
+Card are moving beetween stacks ...
+******
 * Logs
 ** <2011-01-23 ned>
-*** Refaktoring cardhand.js
+*** DONE Refaktoring cardhand.js
 Puting all Images of cards in cardT, and in Card object referensing to image
+*** TODO Trying to make speed
+ What I want
+
+<2011-01-25 uto>
+  Refactoring one done. Images are loaded once in cardT ( card table ),but cards are generatet as
+ objects.
+Trying to speed up.
+
+
+<2011-01-25 uto> Trying speed
+
